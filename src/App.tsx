@@ -156,7 +156,6 @@ function App() {
     : allPlaces
   ).sort((left, right) => left.name.localeCompare(right.name))
   const highlightedPlace = highlightedPlaceId ? allPlaces.find((place) => place.id === highlightedPlaceId) : null
-  const selectedGroup = activePlaceFilter ? placeGroups.find((group) => group.id === activePlaceFilter) : null
 
   const showPlaceGroup = (group: PlaceFilter) => {
     setActivePlaceFilter(group)
@@ -342,12 +341,11 @@ function App() {
                 showPlaceLabels={showPlaceLabels}
                 highlightedPlaceId={highlightedPlaceId}
               />
-              {(highlightedPlace || activePlaceFilter) && (
+              {highlightedPlace && (
                 <div className="map-selection-callout" aria-live="polite">
-                  <span className="selection-callout-label">{highlightedPlace ? 'SELECTED PLACE' : `SHOWING ${selectedGroup?.label.toUpperCase() ?? 'PLACES'}`}</span>
-                  <strong>{highlightedPlace?.name ?? `${visibleMapPlaces.length} places`}</strong>
-                  {!highlightedPlace && activePlaceFilter !== 'all' && <span className="selection-callout-names">{visibleMapPlaces.map((place) => place.name).join(' · ')}</span>}
-                  {highlightedPlace && <span className="selection-callout-names">{highlightedPlace.address}</span>}
+                  <span className="selection-callout-label">SELECTED PLACE</span>
+                  <strong>{highlightedPlace.name}</strong>
+                  <span className="selection-callout-names">{highlightedPlace.address}</span>
                 </div>
               )}
               <button
