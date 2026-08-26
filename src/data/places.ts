@@ -49,6 +49,18 @@ export const places: Place[] = [
     googleMapsUrl: googleMaps(52.2277265, 21.0187375, 'Mercure Warszawa Grand'),
   },
   {
+    id: 'hotel-gromada',
+    name: 'Hotel Gromada Warszawa Centrum',
+    category: 'hotel',
+    group: 'core',
+    address: 'Pl. Powstańców Warszawy 2, 00-030 Warszawa',
+    lat: 52.23424,
+    lon: 21.0149,
+    note: 'Additional hotel anchor. Not included as a planned route stop.',
+    source: 'Hotel Gromada official contact page / OpenStreetMap geocoding',
+    googleMapsUrl: googleMaps(52.23424, 21.0149, 'Hotel Gromada Warszawa Centrum'),
+  },
+  {
     id: 'elektrownia-powisle',
     name: 'Elektrownia Powiśle',
     category: 'shopping',
