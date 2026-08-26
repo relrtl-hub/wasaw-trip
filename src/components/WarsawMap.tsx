@@ -127,6 +127,9 @@ export function WarsawMap({ places, routeDisplays, selectedSegment = null, onSeg
               <span className="popup-category">{place.addedByAssistant ? '✦ Added by assistant' : categoryLabels[place.category]}</span>
               <strong>{place.name}</strong>
               <span>{place.address}</span>
+              {place.rating && <span className="place-rating">★ {place.rating.toFixed(1)} Google</span>}
+              {place.price && <span>{place.price}</span>}
+              {place.hours && <span>{place.hours}</span>}
               {place.tags?.length ? <div className="place-tags">{place.tags.map((tag) => <span key={tag}>{tag}</span>)}</div> : null}
               <small>{place.note}</small>
               <a href={place.googleMapsUrl} rel="noreferrer" target="_blank">Open in Google Maps ↗</a>

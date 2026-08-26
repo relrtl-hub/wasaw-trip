@@ -58,6 +58,11 @@ type PlaceSearchResult = {
   type?: string
 }
 
+const travelPapers = [
+  { title: 'Flight tickets', detail: 'EL AL · TLV ↔ WAW · 2 passengers', file: 'flight-tickets.pdf' },
+  { title: 'Hotel voucher', detail: 'Mercure Warszawa Grand · 30 Aug–02 Sep', file: 'hotel-voucher.pdf' },
+]
+
 const days: Array<{ id: DayKey; label: string; date: string; caption: string }> = [
   { id: 'day1', label: 'Day 1', date: '30 Aug', caption: 'Old Town + Koneser' },
   { id: 'day2', label: 'Day 2', date: '31 Aug', caption: 'Central shopping' },
@@ -134,15 +139,24 @@ function App() {
       .filter((place) => placeGroupFor(place) === group.id)
       .sort((left, right) => left.name.localeCompare(right.name)),
   }))
-  const visibleMapPlaces = mapMode === 'category' && activePlaceFilter
-    ? allPlaces.filter((place) => activePlaceFilter === 'all' || placeGroupFor(place) === activePlaceFilter)
+  const corePlaces = allPlaces.filter((place) => placeGroupFor(place) === 'core')
+  const filteredMapPlaces = mapMode === 'category' && activePlaceFilter && activePlaceFilter !== 'all'
+    ? allPlaces.filter((place) => placeGroupFor(place) === activePlaceFilter)
     : allPlaces
+  const visibleMapPlaces = [...new Map([...corePlaces, ...filteredMapPlaces].map((place) => [place.id, place])).values()]
   const mapRouteDisplays = mapMode === 'route' ? visibleRouteDisplays : []
   const mapCaption = mapMode === 'route'
     ? 'MAP / ACTIVE ROUTE'
     : mapMode === 'category'
       ? `MAP / ${activePlaceFilter === 'all' ? 'ALL PLACES' : placeGroups.find((group) => group.id === activePlaceFilter)?.label.toUpperCase()}`
       : 'MAP / PLACE'
+
+  const placeOptions = (activePlaceFilter && activePlaceFilter !== 'all'
+    ? allPlaces.filter((place) => placeGroupFor(place) === activePlaceFilter)
+    : allPlaces
+  ).sort((left, right) => left.name.localeCompare(right.name))
+  const highlightedPlace = highlightedPlaceId ? allPlaces.find((place) => place.id === highlightedPlaceId) : null
+  const selectedGroup = activePlaceFilter ? placeGroups.find((group) => group.id === activePlaceFilter) : null
 
   const showPlaceGroup = (group: PlaceFilter) => {
     setActivePlaceFilter(group)
@@ -254,53 +268,12 @@ function App() {
           </div>
         </div>
 
-        <section className="places-sidebar" aria-label="Trip places">
-          <div className="places-heading">
-            <div><p className="eyebrow">PLACES</p><h2>Trip stops</h2></div>
-            <span>{allPlaces.length}</span>
-          </div>
-          <div className="place-filter-list">
-            <button aria-pressed={mapMode === 'category' && activePlaceFilter === 'all'} className="place-filter-button" onClick={() => showPlaceGroup('all')} type="button"><span>All</span><small>{allPlaces.length}</small></button>
-            {placeGroups.map((group) => (
-              <button aria-pressed={mapMode === 'category' && activePlaceFilter === group.id} className="place-filter-button" key={group.id} onClick={() => showPlaceGroup(group.id)} type="button"><span>{group.label}</span><small>{placesByGroup.find((item) => item.id === group.id)?.places.length ?? 0}</small></button>
-            ))}
-          </div>
-          <div className="place-groups">
-            {placesByGroup.map((group) => (
-              <section className="place-group" key={group.id}>
-                <button className="place-group-heading" onClick={() => showPlaceGroup(group.id)} type="button"><span>{group.label}</span><small>{group.places.length}</small></button>
-                <div className="place-group-list">
-                  {group.places.map((place) => (
-                    <div className="place-row" key={place.id}>
-                      <button aria-pressed={highlightedPlaceId === place.id} className={`place-item ${highlightedPlaceId === place.id ? 'is-highlighted' : ''}`} onClick={() => handlePlaceSelect(place)} type="button">
-                        <span className={`place-dot place-dot-${group.id}`} />
-                        <span><strong>{place.name}</strong><small>{place.address}</small></span>
-                      </button>
-                      {place.userAdded && <button aria-label={`Delete ${place.name}`} className="delete-place-button" onClick={() => deleteCustomPlace(place)} type="button">×</button>}
-                    </div>
-                  ))}
-                  {!group.places.length && <p className="empty-place-group">Nothing here yet.</p>}
-                </div>
-              </section>
-            ))}
-          </div>
-          <form className="add-place-form" onSubmit={handleSearchPlaces}>
-            <p className="add-place-heading">ADD A PLACE</p>
-            <div className="add-place-input-row"><input aria-label="Search for a Warsaw place" id="place-search" onChange={(event) => setAddQuery(event.target.value)} placeholder="Search Warsaw..." value={addQuery} /><button disabled={addSearching} type="submit">{addSearching ? '...' : 'Search'}</button></div>
-            <select aria-label="Category for the new place" onChange={(event) => setAddGroup(event.target.value as PlaceGroup)} value={addGroup}>
-              {placeGroups.filter((group) => group.id !== 'core').map((group) => <option key={group.id} value={group.id}>{group.label}</option>)}
-            </select>
-            {addError && <p className="add-place-error">{addError}</p>}
-            {addResults.length > 0 && <div className="place-search-results">{addResults.map((result) => <button key={`${result.lat}-${result.lon}-${result.display_name}`} onClick={() => addSearchResult(result)} type="button"><strong>{result.display_name.split(',')[0]}</strong><small>{result.display_name}</small></button>)}</div>}
-          </form>
-        </section>
-
         <div className="sidebar-footer">
           <div className="privacy-note">
             <span className="lock-icon" aria-hidden="true">⌑</span>
             <div>
               <strong>Private by default</strong>
-              <span>Documents stay out of the public site.</span>
+              <span>Travel papers linked below.</span>
             </div>
           </div>
           <p className="build-note">Phase 4 · history + memorials</p>
@@ -313,11 +286,11 @@ function App() {
             <p className="eyebrow">WARSAW / TRIP CONTROL</p>
             <h1>Three days, one good map.</h1>
           </div>
-          <button className="weather-pill" type="button" onClick={() => setMapMode('route')}>
+          <a className="weather-pill" href="https://www.timeanddate.com/weather/poland/warsaw/hourly" rel="noreferrer" target="_blank">
             <span className="weather-symbol" aria-hidden="true">◌</span>
-            <span><strong>Weather</strong><small>{weather ? 'Live forecast loaded' : 'Loading live forecast'}</small></span>
+            <span><strong>Weather</strong><small>Warsaw hourly · English</small></span>
             <span className="arrow">↗</span>
-          </button>
+          </a>
         </header>
 
         <section className="day-strip" aria-label="Trip days">
@@ -369,6 +342,14 @@ function App() {
                 showPlaceLabels={showPlaceLabels}
                 highlightedPlaceId={highlightedPlaceId}
               />
+              {(highlightedPlace || activePlaceFilter) && (
+                <div className="map-selection-callout" aria-live="polite">
+                  <span className="selection-callout-label">{highlightedPlace ? 'SELECTED PLACE' : `SHOWING ${selectedGroup?.label.toUpperCase() ?? 'PLACES'}`}</span>
+                  <strong>{highlightedPlace?.name ?? `${visibleMapPlaces.length} places`}</strong>
+                  {!highlightedPlace && activePlaceFilter !== 'all' && <span className="selection-callout-names">{visibleMapPlaces.map((place) => place.name).join(' · ')}</span>}
+                  {highlightedPlace && <span className="selection-callout-names">{highlightedPlace.address}</span>}
+                </div>
+              )}
               <button
                 aria-label={showPlaceLabels ? 'Hide place names on the map' : 'Show place names on the map'}
                 aria-pressed={showPlaceLabels}
@@ -383,14 +364,28 @@ function App() {
               <div className="map-legend map-legend-live"><span><i className="legend-dot amber" />Shopping</span><span><i className="legend-dot hotel-legend" />Hotel</span><span><i className="legend-dot plum" />History</span><span><i className="legend-line selected-route-legend" />Selected segment</span><span><i className="legend-line optional-route-legend" />Optional</span></div>
             </div>
             <div className="map-footer"><span><i className="legend-dot amber" /> {visibleMapPlaces.length} places shown · {mapMode === 'route' ? '1 route displayed' : 'place browsing mode'}</span><span>{mapMode !== 'route' ? (mapMode === 'place' ? 'Place highlighted' : 'Category places shown') : routeLoading ? 'Measuring street routes...' : activeRouteResult?.legs.some((leg) => leg.source === 'fallback') ? 'Street route unavailable · use Google Maps' : activeRouteResult ? `${formatDistance(activeRouteResult.distanceMeters)} walking route loaded` : 'Scroll, zoom, tap a marker'}</span></div>
+            <section className="place-browser" aria-label="Map places">
+              <div className="place-browser-heading"><div><p className="section-kicker">MAP PLACES</p><h3>Find a place</h3></div><span>{placeOptions.length}</span></div>
+              <div className="place-browser-controls">
+                <label className="combo-field"><span>Category</span><select aria-label="Map place category" onChange={(event) => showPlaceGroup(event.target.value as PlaceFilter)} value={activePlaceFilter ?? 'all'}><option value="all">All places</option>{placeGroups.map((group) => <option key={group.id} value={group.id}>{group.label} · {placesByGroup.find((item) => item.id === group.id)?.places.length ?? 0}</option>)}</select></label>
+                <label className="combo-field"><span>Place</span><select aria-label="Choose a place to show on the map" onChange={(event) => { const place = allPlaces.find((candidate) => candidate.id === event.target.value); if (place) handlePlaceSelect(place) }} value={highlightedPlaceId ?? ''}><option value="">Choose a place…</option>{placeOptions.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}</select></label>
+              </div>
+              <p className="place-browser-note">Choose a category to show its points, or choose one place to center and highlight it.</p>
+              <form className="add-place-form" onSubmit={handleSearchPlaces}>
+                <p className="add-place-heading">ADD A WARSAW PLACE</p>
+                <div className="add-place-input-row"><input aria-label="Search for a Warsaw place" id="place-search" onChange={(event) => setAddQuery(event.target.value)} placeholder="Search Warsaw..." value={addQuery} /><button disabled={addSearching} type="submit">{addSearching ? '...' : 'Search'}</button></div>
+                <select aria-label="Category for the new place" onChange={(event) => setAddGroup(event.target.value as PlaceGroup)} value={addGroup}>{placeGroups.filter((group) => group.id !== 'core').map((group) => <option key={group.id} value={group.id}>{group.label}</option>)}</select>
+                {addError && <p className="add-place-error">{addError}</p>}
+                {addResults.length > 0 && <div className="place-search-results">{addResults.map((result) => <button key={`${result.lat}-${result.lon}-${result.display_name}`} onClick={() => addSearchResult(result)} type="button"><strong>{result.display_name.split(',')[0]}</strong><small>{result.display_name}</small></button>)}</div>}
+              </form>
+              {customPlaces.length > 0 && <div className="custom-place-list"><p className="add-place-heading">ADDED PLACES</p>{customPlaces.map((place) => <div className="custom-place-row" key={place.id}><span>{place.name}</span><button aria-label={`Delete ${place.name}`} className="delete-place-button" onClick={() => deleteCustomPlace(place)} type="button">×</button></div>)}</div>}
+            </section>
           </div>
 
           <div className="route-panel">
             <div className="card-header route-header">
               <div><p className="section-kicker">DAY {activeDay.slice(-1)} / PLAN</p><h2>Route board</h2></div>
-              <span className={`draft-chip ${routeLoading ? 'is-loading' : ''}`}>{routeLoading ? 'LOADING' : routeError ? 'ERROR' : 'LIVE'}</span>
             </div>
-            <p className="panel-intro">Only the selected route appears on the map. Distances and lines use street-network directions, never aerial distance. Pick a route, then click any segment to highlight it in amber.</p>
             <div className="route-list">
               {selectedRoutes.map((route) => (
                 <button className={`route-card ${activeRoute?.id === route.id ? 'is-selected' : ''}`} key={route.id} onClick={() => { setActiveRouteId(route.id); setSelectedSegment(null); setHighlightedPlaceId(null); setActivePlaceFilter(null); setMapMode('route') }} type="button">
@@ -424,7 +419,6 @@ function App() {
                 <a className="navigate-button" href={googleDirectionsUrl(activeRoute, allPlaces)} rel="noreferrer" target="_blank">Navigate in Google Maps ↗</a>
               </div>
             )}
-            <button className="add-place-button" type="button" onClick={() => document.getElementById('place-search')?.focus()}><span>+</span> Add a place in the sidebar</button>
           </div>
         </section>
 
@@ -439,8 +433,8 @@ function App() {
             <div className="currency-strip"><span><small>1 PLN</small><strong>{currency ? `${currency.eurPerPln.toFixed(4)} EUR` : '...'}</strong></span><span><small>1 EUR</small><strong>{currency ? `${currency.plnPerEur.toFixed(2)} PLN` : '...'}</strong></span><span><small>1 EUR</small><strong>{currency ? `${currency.eurPerIls.toFixed(2)} ILS` : '...'}</strong></span></div>
           </article>
           <article className="status-card essentials-card">
-            <div className="card-header"><div><p className="section-kicker">ESSENTIALS</p><h2>Travel papers</h2></div><span className="count-label">0 / 4 ready</span></div>
-            <div className="essentials-row"><span className="paper-placeholder">□</span><div><strong>Placeholders prepared</strong><small>Passport, insurance, phone plan, hotel voucher</small></div><button type="button" onClick={() => undefined} aria-label="Open essentials">↗</button></div>
+            <div className="card-header"><div><p className="section-kicker">ESSENTIALS</p><h2>Travel papers</h2></div><span className="count-label">2 files</span></div>
+            <div className="paper-list">{travelPapers.map((paper) => <a className="paper-row" download href={`${import.meta.env.BASE_URL}travel-papers/${paper.file}`} key={paper.file}><span className="paper-placeholder">↗</span><span><strong>{paper.title}</strong><small>{paper.detail}</small></span><b>PDF</b></a>)}</div>
           </article>
         </section>
 
