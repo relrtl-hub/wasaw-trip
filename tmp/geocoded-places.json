@@ -1,0 +1,80 @@
+[
+  {
+    "id": "hotel",
+    "query": "Mercure Warszawa Grand, Krucza 28, Warszawa, Poland",
+    "display_name": "Mercure Warszawa Grand, 28, Krucza, \u015ar\u00f3dmie\u015bcie Po\u0142udniowe, \u015ar\u00f3dmie\u015bcie, Warszawa, wojew\u00f3dztwo mazowieckie, 00-522, Polska",
+    "lat": 52.2277265,
+    "lon": 21.0187375,
+    "osm_type": "way",
+    "osm_id": 1206364622
+  },
+  {
+    "id": "elektrownia-powisle",
+    "query": "Elektrownia Powi\u015ble, Dobra 42, Warszawa, Poland",
+    "display_name": "Elektrownia Powi\u015ble, 42, Dobra, Powi\u015ble-Skarpa, Powi\u015ble, \u015ar\u00f3dmie\u015bcie, Warszawa, wojew\u00f3dztwo mazowieckie, 00-344, Polska",
+    "lat": 52.240774,
+    "lon": 21.0278317,
+    "osm_type": "way",
+    "osm_id": 753586996
+  },
+  {
+    "id": "urban-outfitters",
+    "query": "Urban Outfitters, Dobra 42, Warszawa, Poland",
+    "error": "no result"
+  },
+  {
+    "id": "tk-maxx",
+    "query": "TK Maxx, Marszalkowska 104/122, Warszawa, Poland",
+    "display_name": "TK Maxx, 104/122, Marsza\u0142kowska, Centrum, \u015ar\u00f3dmie\u015bcie P\u00f3\u0142nocne, \u015ar\u00f3dmie\u015bcie, Warszawa, wojew\u00f3dztwo mazowieckie, 00-017, Polska",
+    "lat": 52.2316168,
+    "lon": 21.0111431,
+    "osm_type": "node",
+    "osm_id": 2390051917
+  },
+  {
+    "id": "zlote-tarasy",
+    "query": "Zlote Tarasy, Zlota 59, Warszawa, Poland",
+    "display_name": "Z\u0142ote Tarasy, 59, Z\u0142ota, \u017belazna Brama, \u015ar\u00f3dmie\u015bcie P\u00f3\u0142nocne, \u015ar\u00f3dmie\u015bcie, Warszawa, wojew\u00f3dztwo mazowieckie, 00-120, Polska",
+    "lat": 52.2300714,
+    "lon": 21.0024449,
+    "osm_type": "way",
+    "osm_id": 30611687
+  },
+  {
+    "id": "balagan",
+    "query": "Balagan Flagship Store, Mysia 3, Warszawa, Poland",
+    "error": "no result"
+  },
+  {
+    "id": "hala-koszyki",
+    "query": "Hala Koszyki, Koszykowa 63, Warszawa, Poland",
+    "display_name": "Hala Koszyki, 63, Koszykowa, Koszyki, \u015ar\u00f3dmie\u015bcie Po\u0142udniowe, \u015ar\u00f3dmie\u015bcie, Warszawa, wojew\u00f3dztwo mazowieckie, 00-667, Polska",
+    "lat": 52.2222237,
+    "lon": 21.0110167,
+    "osm_type": "way",
+    "osm_id": 459521303
+  },
+  {
+    "id": "presidential-palace",
+    "query": "Presidential Palace in Warsaw, Krakowskie Przedmiescie 48/50, Warszawa, Poland",
+    "error": "no result"
+  },
+  {
+    "id": "viva-cuba",
+    "query": "Viva Cuba Dance Studio, Marszalkowska 115, Warszawa, Poland",
+    "display_name": "Viva Cuba Dance Studio, 115, Marsza\u0142kowska, \u017belazna Brama, \u015ar\u00f3dmie\u015bcie P\u00f3\u0142nocne, \u015ar\u00f3dmie\u015bcie, Warszawa, wojew\u00f3dztwo mazowieckie, 00-139, Polska",
+    "lat": 52.2415215,
+    "lon": 21.0028384,
+    "osm_type": "node",
+    "osm_id": 4586122020
+  },
+  {
+    "id": "centrum-praskie-koneser",
+    "query": "Centrum Praskie Koneser, Warszawa, Poland",
+    "display_name": "Koneser, Szmulowizna, Praga-P\u00f3\u0142noc, Warszawa, wojew\u00f3dztwo mazowieckie, 03-736, Polska",
+    "lat": 52.2555027,
+    "lon": 21.0452825,
+    "osm_type": "way",
+    "osm_id": 126234965
+  }
+]
