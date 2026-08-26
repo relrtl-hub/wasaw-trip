@@ -155,8 +155,6 @@ function App() {
     ? allPlaces.filter((place) => placeGroupFor(place) === activePlaceFilter)
     : allPlaces
   ).sort((left, right) => left.name.localeCompare(right.name))
-  const highlightedPlace = highlightedPlaceId ? allPlaces.find((place) => place.id === highlightedPlaceId) : null
-
   const showPlaceGroup = (group: PlaceFilter) => {
     setActivePlaceFilter(group)
     setMapMode('category')
@@ -341,13 +339,6 @@ function App() {
                 showPlaceLabels={showPlaceLabels}
                 highlightedPlaceId={highlightedPlaceId}
               />
-              {highlightedPlace && (
-                <div className="map-selection-callout" aria-live="polite">
-                  <span className="selection-callout-label">SELECTED PLACE</span>
-                  <strong>{highlightedPlace.name}</strong>
-                  <span className="selection-callout-names">{highlightedPlace.address}</span>
-                </div>
-              )}
               <button
                 aria-label={showPlaceLabels ? 'Hide place names on the map' : 'Show place names on the map'}
                 aria-pressed={showPlaceLabels}
